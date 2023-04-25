@@ -620,6 +620,7 @@ static std::vector<std::string> s_Preset_print_options {
         "notes", 
         "print_custom_variables",
         "complete_objects",
+        "parallel_objects_step",
         "complete_objects_one_skirt",
         "complete_objects_sort",
         "extruder_clearance_radius", 
@@ -670,6 +671,7 @@ static std::vector<std::string> s_Preset_print_options {
         "threads",
         // wipe tower
         "wipe_tower", "wipe_tower_x", "wipe_tower_y", "wipe_tower_width", "wipe_tower_rotation_angle", "wipe_tower_bridging",
+        "wipe_tower_speed", "wipe_tower_wipe_starting_speed",
         "wipe_tower_brim_width",
         "mmu_segmented_region_max_width",
         "single_extruder_multi_material_priming", 

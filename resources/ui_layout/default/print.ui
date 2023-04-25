@@ -331,6 +331,8 @@ group:label_width$8:sidetext_width$7:Speed for print moves
 	line:Other speed
 		setting:width$4:thin_walls_speed
 		setting:width$4:ironing_speed
+		setting:wipe_tower_speed
+		setting:wipe_tower_wipe_starting_speed
 group:Speed for non-print moves
 	line:Travel speed
 		setting:label$xy:travel_speed
@@ -476,6 +478,7 @@ group:Plater
 	setting:duplicate_distance
 group:Sequential printing
 	setting:tags$Advanced$Expert$Prusa:complete_objects
+	setting:parallel_objects_step
 	setting:complete_objects_one_skirt
 	setting:complete_objects_sort
 	line:Extruder clearance (mm)

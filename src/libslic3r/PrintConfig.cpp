@@ -1065,6 +1065,19 @@ void PrintConfigDef::init_fff_params()
     def->mode = comSimpleAE | comPrusa;
     def->set_default_value(new ConfigOptionBool(false));
 
+    def = this->add("parallel_objects_step", coFloat);
+    def->label = L("Parallel printing step");
+    def->category = OptionCategory::output;
+    def->tooltip = L("When multiple objects are present, instead of jumping form one to another at each layer"
+        " the printer will continue to print the curernt object layers up to this height before moving to the next object."
+        " (first layers will be still printed one by one)."
+        "\nThis feature also use the same extruder clearance radius field as 'complete individual objects' (complete_objects)"
+        ", but you can modify them to instead reflect the clerance of the nozzle, if this field reflect the z-clearance of it."
+        "\nThis field is exclusive with 'complete individual objects' (complete_objects). Set to 0 to deactivate.");
+    def->sidetext = L("mm");
+    def->mode = comAdvancedE | comSuSi;
+    def->set_default_value(new ConfigOptionFloat(0));
+
     def = this->add("complete_objects_one_skirt", coBool);
     def->label = L("Allow only one skirt loop");
     def->category = OptionCategory::output;
@@ -5532,7 +5545,6 @@ void PrintConfigDef::init_fff_params()
     def->min = 0;
     def->mode = comExpert | comSuSi;
     def->set_default_value(new ConfigOptionFloatOrPercent(100, true));
-
     def = this->add("threads", coInt);
     def->label = L("Threads");
     def->tooltip = L("Threads are used to parallelize long-running tasks. Optimal threads number "
@@ -5848,6 +5860,26 @@ void PrintConfigDef::init_fff_params()
                    "Extrude the excess material into the wipe tower.");
     def->mode = comAdvancedE | comPrusa;
     def->set_default_value(new ConfigOptionBool(false));
+
+    def = this->add("wipe_tower_speed", coFloat);
+    def->label = L("Wipe Tower Speed");
+    def->category = OptionCategory::speed;
+    def->tooltip = L("Printing speed of the wipe tower. Capped by filament_max_volumetric_speed (if set)."
+        "\nIf set to zero, a value of 80mm/s is used.");
+    def->sidetext = L("mm/s");
+    def->mode = comAdvancedE | comSuSi;
+    def->set_default_value(new ConfigOptionFloat(80.));
+
+    def = this->add("wipe_tower_wipe_starting_speed", coFloatOrPercent);
+    def->label = L("Wipe tower starting speed");
+    def->category = OptionCategory::speed;
+    def->tooltip = L("Start of the wiping speed ramp up (for wipe tower)."
+        "\nCan be a % of the 'Wipe tower speed'."
+        "\nSet to 0 to disable.");
+    def->sidetext = L("mm/s or %");
+    def->mode = comAdvancedE | comSuSi;
+    def->set_default_value(new ConfigOptionFloatOrPercent(33, true));
+
 
     def = this->add("wiping_volumes_extruders", coFloats);
     def->label = L("Purging volumes - load/unload volumes");
@@ -7966,7 +7998,7 @@ double min_object_distance(const ConfigBase *config, double ref_height /* = 0*/)
     double base_dist = 0;
     //std::cout << "START min_object_distance =>" << base_dist << "\n";
     const ConfigOptionBool* co_opt = config->option<ConfigOptionBool>("complete_objects");
-    if (co_opt && co_opt->value) {
+    if (config->option("parallel_objects_step")->getFloat() > 0 || co_opt && co_opt->value) {
         double skirt_dist = 0;
         try {
             std::vector<double> vals = dynamic_cast<const ConfigOptionFloats*>(config->option("nozzle_diameter"))->values;
